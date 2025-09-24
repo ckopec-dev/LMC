@@ -153,14 +153,25 @@ namespace LMC
                     if (inputQueue.Count > 0)
                     {
                         accumulator = inputQueue.Dequeue();
+                        // Validate input range for LMC
+                        if (accumulator < -999 || accumulator > 999)
+                        {
+                            Console.WriteLine($"Warning: Input {accumulator} out of LMC range (-999 to 999), clamping");
+                            accumulator = Math.Max(-999, Math.Min(999, accumulator));
+                        }
                         Console.WriteLine($"INPUT: Read {accumulator}");
                     }
                     else
                     {
-                        Console.Write("INPUT required: ");
+                        Console.Write("INPUT required (-999 to 999): ");
                         string input = Console.ReadLine();
                         if (int.TryParse(input, out int value))
                         {
+                            if (value < -999 || value > 999)
+                            {
+                                Console.WriteLine($"Warning: Input {value} out of LMC range (-999 to 999), clamping");
+                                value = Math.Max(-999, Math.Min(999, value));
+                            }
                             accumulator = value;
                         }
                         else
