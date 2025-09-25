@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMC", "LMC\LMC.csproj", "{4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMC32", "LMC32\LMC32.csproj", "{93218B99-61F4-4B0A-A2B0-FEA4267A594E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMC64", "LMC64\LMC64.csproj", "{94AD6952-C280-4E5F-AFD2-8FD8ACBA4911}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{93218B99-61F4-4B0A-A2B0-FEA4267A594E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93218B99-61F4-4B0A-A2B0-FEA4267A594E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93218B99-61F4-4B0A-A2B0-FEA4267A594E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94AD6952-C280-4E5F-AFD2-8FD8ACBA4911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94AD6952-C280-4E5F-AFD2-8FD8ACBA4911}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94AD6952-C280-4E5F-AFD2-8FD8ACBA4911}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94AD6952-C280-4E5F-AFD2-8FD8ACBA4911}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
