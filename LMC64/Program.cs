@@ -3,7 +3,7 @@
     public class LMCSimulator
     {
         // Memory (100 mailboxes, 0-99) - now 64-bit
-        private long[] memory = new long[100];
+        private readonly long[] memory = new long[100];
 
         // Registers - now 64-bit
         private long accumulator = 0;
@@ -14,8 +14,8 @@
         private bool isHalted = false;
 
         // Input/Output queues - now 64-bit
-        private Queue<long> inputQueue = new Queue<long>();
-        private List<long> outputList = new List<long>();
+        private readonly Queue<long> inputQueue = [];
+        private readonly List<long> outputList = [];
 
         // Instruction set
         private const int ADD = 1;      // 1XX - Add
@@ -55,7 +55,7 @@
             try
             {
                 string[] lines = File.ReadAllLines(filename);
-                List<long> program = new List<long>();
+                List<long> program = [];
 
                 foreach (string line in lines)
                 {
@@ -69,7 +69,7 @@
                     }
                 }
 
-                LoadProgram(program.ToArray());
+                LoadProgram([.. program]);
                 Console.WriteLine($"Loaded {program.Count} instructions from {filename}");
             }
             catch (Exception ex)
@@ -93,7 +93,7 @@
 
         public List<long> GetOutput()
         {
-            return new List<long>(outputList);
+            return [.. outputList];
         }
 
         public void Run()
@@ -157,7 +157,7 @@
                     else
                     {
                         Console.Write("INPUT required (64-bit integer): ");
-                        string input = Console.ReadLine();
+                        string input = Console.ReadLine()!;
                         if (long.TryParse(input, out long value))
                         {
                             accumulator = value;
@@ -300,9 +300,9 @@
 
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            LMCSimulator lmc = new LMCSimulator();
+            LMCSimulator lmc = new();
             bool running = true;
 
             Console.WriteLine("Little Man Computer Simulator");
@@ -323,7 +323,7 @@
                 Console.WriteLine("0. Exit");
 
                 Console.Write("\nEnter command: ");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine()!;
 
                 switch (input)
                 {
@@ -378,19 +378,19 @@
         static void LoadFromFile(LMCSimulator lmc)
         {
             Console.Write("Enter filename: ");
-            string filename = Console.ReadLine();
+            string filename = Console.ReadLine()!;
             lmc.LoadProgramFromFile(filename);
         }
 
         static void LoadManually(LMCSimulator lmc)
         {
             Console.WriteLine("Enter program instructions (one per line, empty line to finish):");
-            List<long> program = new List<long>();
+            List<long> program = [];
 
             while (true)
             {
                 Console.Write($"[{program.Count:D2}]: ");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine()!;
 
                 if (string.IsNullOrEmpty(input))
                     break;
@@ -405,14 +405,14 @@
                 }
             }
 
-            lmc.LoadProgram(program.ToArray());
+            lmc.LoadProgram([.. program]);
             Console.WriteLine($"Loaded {program.Count} instructions.");
         }
 
         static void AddInputs(LMCSimulator lmc)
         {
             Console.WriteLine("Enter input values (space-separated): ");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine()!;
             string[] values = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string value in values)
@@ -435,7 +435,7 @@
                 lmc.Step();
 
                 Console.Write("Press Enter to continue or 'q' to quit: ");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine()!;
 
                 if (input?.ToLower() == "q")
                     break;
@@ -445,11 +445,11 @@
         static void DisplayMemory(LMCSimulator lmc)
         {
             Console.Write("Enter start address (0-99, default 0): ");
-            string startInput = Console.ReadLine();
+            string startInput = Console.ReadLine()!;
             int start = string.IsNullOrEmpty(startInput) ? 0 : int.Parse(startInput);
 
             Console.Write("Enter end address (0-99, default 99): ");
-            string endInput = Console.ReadLine();
+            string endInput = Console.ReadLine()!;
             int end = string.IsNullOrEmpty(endInput) ? 99 : int.Parse(endInput);
 
             lmc.DisplayMemory(start, end);
@@ -466,21 +466,21 @@
             Console.WriteLine("6. Large number multiplication");
 
             Console.Write("Select sample program: ");
-            string choice = Console.ReadLine();
+            string choice = Console.ReadLine()!;
 
             switch (choice)
             {
                 case "1":
                     // Add two large numbers - 64-bit version
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         901,    // 00: Input first number
                         390,    // 01: Store first number in location 90
                         901,    // 02: Input second number
                         190,    // 03: Add first number from location 90
                         902,    // 04: Output result
                         000     // 05: Halt
-                    });
+                    ]);
                     // Pre-load some large test numbers
                     lmc.AddInputs(5000000000000000000L, 2000000000000000000L);
                     lmc.DisplayState();
@@ -492,17 +492,17 @@
                 case "2":
                     // Count down from a billion - 64-bit version
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         590,    // 00: Load counter from memory location 90
                         902,    // 01: Output current number
                         291,    // 02: Subtract decrement from memory location 91
                         390,    // 03: Store result back in location 90
                         800,    // 04: Branch if positive (>=0) to address 00
                         000     // 05: Halt
-                    });
+                    ]);
                     // Store initial values - count down from 1 billion in steps of 100 million
-                    lmc.LoadProgram(new long[] { 1000000000L }, 90);    // 1 billion
-                    lmc.LoadProgram(new long[] { 100000000L }, 91);     // 100 million step
+                    lmc.LoadProgram([1000000000L], 90);    // 1 billion
+                    lmc.LoadProgram([100000000L], 91);     // 100 million step
                     lmc.DisplayState();
                     Console.WriteLine("This program counts down from 1 billion in steps of 100 million.");
                     Console.WriteLine("Will output: 1000000000, 900000000, 800000000, ..., 100000000, 0");
@@ -511,7 +511,7 @@
                 case "3":
                     // Find maximum of three large numbers
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         901,    // 00: Input first number
                         390,    // 01: Store in location 90 (current max)
                         901,    // 02: Input second number
@@ -532,7 +532,7 @@
                         590,    // 17: Load final max
                         902,    // 18: Output result
                         000     // 19: Halt
-                    });
+                    ]);
                     // Pre-load large test numbers
                     lmc.AddInputs(9223372036854775000L, 5000000000000000000L, 7777777777777777777L);
                     lmc.DisplayState();
@@ -543,7 +543,7 @@
                 case "4":
                     // Calculate factorial (iterative)
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         901,    // 00: Input number for factorial
                         390,    // 01: Store input in location 90
                         595,    // 02: Load 1 (initial result)
@@ -573,10 +573,10 @@
                         592,    // 26: Load final result
                         902,    // 27: Output factorial
                         000     // 28: Halt
-                    });
+                    ]);
                     // Initialize constants
-                    lmc.LoadProgram(new long[] { 1 }, 95);  // Constant 1
-                    lmc.LoadProgram(new long[] { 1 }, 92);  // Initial result
+                    lmc.LoadProgram([1], 95);  // Constant 1
+                    lmc.LoadProgram([1], 92);  // Initial result
                     lmc.AddInput(10L); // Calculate 10!
                     lmc.DisplayState();
                     Console.WriteLine("This program calculates factorial iteratively.");
@@ -587,7 +587,7 @@
                 case "5":
                     // Fibonacci sequence generator
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         901,    // 00: Input how many Fibonacci numbers
                         390,    // 01: Store count in location 90
                         594,    // 02: Load 0 (first Fib number)
@@ -613,11 +613,11 @@
                         390,    // 22: Store counter
                         608,    // 23: Branch back to main loop
                         000     // 24: Halt
-                    });
+                    ]);
                     // Initialize constants
-                    lmc.LoadProgram(new long[] { 0 }, 94);  // Fib(0) = 0
-                    lmc.LoadProgram(new long[] { 1 }, 95);  // Fib(1) = 1  
-                    lmc.LoadProgram(new long[] { 2 }, 96);  // Constant 2
+                    lmc.LoadProgram([0], 94);  // Fib(0) = 0
+                    lmc.LoadProgram([1], 95);  // Fib(1) = 1  
+                    lmc.LoadProgram([2], 96);  // Constant 2
                     lmc.AddInput(15L); // Generate first 15 Fibonacci numbers
                     lmc.DisplayState();
                     Console.WriteLine("This program generates Fibonacci sequence.");
@@ -628,7 +628,7 @@
                 case "6":
                     // Large number multiplication (using repeated addition)
                     lmc.Reset();
-                    lmc.LoadProgram(new long[] {
+                    lmc.LoadProgram([
                         901,    // 00: Input first number (multiplicand)
                         390,    // 01: Store in location 90
                         901,    // 02: Input second number (multiplier)
@@ -647,10 +647,10 @@
                         592,    // 15: Load final result
                         902,    // 16: Output result
                         000     // 17: Halt
-                    });
+                    ]);
                     // Initialize constants
-                    lmc.LoadProgram(new long[] { 0 }, 94);  // Constant 0
-                    lmc.LoadProgram(new long[] { 1 }, 95);  // Constant 1
+                    lmc.LoadProgram([0], 94);  // Constant 0
+                    lmc.LoadProgram([1], 95);  // Constant 1
                     lmc.AddInputs(1000000000L, 5000L); // 1 billion * 5000
                     lmc.DisplayState();
                     Console.WriteLine("This program multiplies two numbers using repeated addition.");
